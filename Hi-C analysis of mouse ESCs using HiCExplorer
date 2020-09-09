@@ -1,0 +1,41 @@
+#Prepare for analysis
+#Download Raw fastq files
+
+mkdir original_data
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR195/007/SRR1956527/SRR1956527_1.fastq.gz -O original_data/SRR1956527_1.fastq.gz
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR195/007/SRR1956527/SRR1956527_2.fastq.gz -O original_data/SRR1956527_2.fastq.gz
+
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR195/008/SRR1956528/SRR1956528_1.fastq.gz -O original_data/SRR1956528_1.fastq.gz
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR195/008/SRR1956528/SRR1956528_2.fastq.gz -O original_data/SRR1956528_2.fastq.gz
+
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR195/009/SRR1956529/SRR1956529_1.fastq.gz -O original_data/SRR1956529_1.fastq.gz
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR195/009/SRR1956529/SRR1956529_2.fastq.gz -O original_data/SRR1956529_2.fastq.gz
+
+#Create an index
+
+mkdir genome_mm10
+wget http://hgdownload-test.cse.ucsc.edu/goldenPath/mm10/bigZips/chromFa.tar.gz -O genome_mm10/chromFa.tar.gz
+tar -xvzf genome_mm10/chromFa.tar.gz
+cat genome_mm10/*.fa > genome_mm10/mm10.fa
+
+#构建index
+hisat2-build -p 8 genome_mm10/mm10.fa hisat2/mm10_index
+
+#比对到基因组
+hisat2 -x /home/wangjunbao1/index/hisat2/UCSC_mm10/mm10 --threads 8 -U ../original_data/SRR1956527_1.fastq.gz --reorder | samtools view -Shb - > SRR1956527_1.bam
+hisat2 -x /home/wangjunbao1/index/hisat2/UCSC_mm10/mm10 --threads 8 -U ../original_data/SRR1956527_2.fastq.gz --reorder | samtools view -Shb - > SRR1956527_2.bam
+hisat2 -x /home/wangjunbao1/index/hisat2/UCSC_mm10/mm10 --threads 8 -U ../original_data/SRR1956528_1.fastq.gz --reorder | samtools view -Shb - > SRR1956528_1.bam
+hisat2 -x /home/wangjunbao1/index/hisat2/UCSC_mm10/mm10 --threads 8 -U ../original_data/SRR1956528_2.fastq.gz --reorder | samtools view -Shb - > SRR1956528_2.bam
+hisat2 -x /home/wangjunbao1/index/hisat2/UCSC_mm10/mm10 --threads 8 -U ../original_data/SRR1956529_1.fastq.gz --reorder | samtools view -Shb - > SRR1956529_1.bam
+hisat2 -x /home/wangjunbao1/index/hisat2/UCSC_mm10/mm10 --threads 8 -U ../original_data/SRR1956529_2.fastq.gz --reorder | samtools view -Shb - > SRR1956529_2.bam
+
+#Build Hi-C matrix
+mkdir hicMatrix
+hicBuildMatrix --samFiles SRR1956527_1.bam SRR1956527_2.bam --binSize 10000 --restrictionSequence GATC --danglingSequence GATC --restrictionCutFile cut_sites.bed --outBam SRR1956527_ref.bam --outFileName hicMatrix/SRR1956527_10kb.h5 --QCfolder hicMatrix/SRR1956527_10kb_QC --threads 8 --inputBufferSize 400000
+hicBuildMatrix --samFiles SRR1956528_1.bam SRR1956528_2.bam --binSize 10000 --restrictionSequence GATC --danglingSequence GATC --restrictionCutFile cut_sites.bed --outBam SRR1956528_ref.bam --outFileName hicMatrix/SRR1956528_10kb.h5 --QCfolder hicMatrix/SRR1956528_10kb_QC --threads 8 --inputBufferSize 400000
+hicBuildMatrix --samFiles SRR1956529_1.bam SRR1956529_2.bam --binSize 10000 --restrictionSequence GATC --danglingSequence GATC --restrictionCutFile cut_sites.bed --outBam SRR1956529_ref.bam --outFileName hicMatrix/SRR1956529_10kb.h5 --QCfolder hicMatrix/SRR1956529_10kb_QC --threads 8 --inputBufferSize 400000
+
+#Merge (sum) matrices from replicates
+hicSumMatrices --matrices hicMatrix/SRR1956527_10kb.h5 hicMatrix/SRR1956528_10kb.h5 \
+        hicMatrix/SRR1956529_10kb.h5 --outFileName hicMatrix/replicateMerged_10kb.h5
+
