@@ -30,6 +30,14 @@ hisat2 -x /home/wangjunbao1/index/hisat2/UCSC_mm10/mm10 --threads 8 -U ../origin
 hisat2 -x /home/wangjunbao1/index/hisat2/UCSC_mm10/mm10 --threads 8 -U ../original_data/SRR1956529_1.fastq.gz --reorder | samtools view -Shb - > SRR1956529_1.bam
 hisat2 -x /home/wangjunbao1/index/hisat2/UCSC_mm10/mm10 --threads 8 -U ../original_data/SRR1956529_2.fastq.gz --reorder | samtools view -Shb - > SRR1956529_2.bam
 
+hisat2 -x /dat01/wangjunbao/Index_chr9/chr9 --threads 16 -U ../original_data/SRR1956527_1.fastq.gz --reorder | samtools view -Shb - > SRR1956527_1.bam
+hisat2 -x /dat01/wangjunbao/Index_chr9/chr9 --threads 16 -U ../original_data/SRR1956527_2.fastq.gz --reorder | samtools view -Shb - > SRR1956527_2.bam
+hisat2 -x /dat01/wangjunbao/Index_chr9/chr9 --threads 16 -U ../original_data/SRR1956528_1.fastq.gz --reorder | samtools view -Shb - > SRR1956528_1.bam
+hisat2 -x /dat01/wangjunbao/Index_chr9/chr9 --threads 16 -U ../original_data/SRR1956528_2.fastq.gz --reorder | samtools view -Shb - > SRR1956528_2.bam
+hisat2 -x /dat01/wangjunbao/Index_chr9/chr9 --threads 16 -U ../original_data/SRR1956529_1.fastq.gz --reorder | samtools view -Shb - > SRR1956529_1.bam
+hisat2 -x /dat01/wangjunbao/Index_chr9/chr9 --threads 16 -U ../original_data/SRR1956529_2.fastq.gz --reorder | samtools view -Shb - > SRR1956529_2.bam
+
+
 #Build Hi-C matrix
 mkdir hicMatrix
 hicBuildMatrix --samFiles SRR1956527_1.bam SRR1956527_2.bam --binSize 10000 --restrictionSequence GATC --danglingSequence GATC --restrictionCutFile cut_sites.bed --outBam SRR1956527_ref.bam --outFileName hicMatrix/SRR1956527_10kb.h5 --QCfolder hicMatrix/SRR1956527_10kb_QC --threads 8 --inputBufferSize 400000
