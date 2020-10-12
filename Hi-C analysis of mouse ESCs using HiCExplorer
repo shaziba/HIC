@@ -40,12 +40,14 @@ hisat2 -x /dat01/wangjunbao/Index_chr9/chr9 --threads 16 -U ../original_data/SRR
 hisat2 -x /dat01/wangjunbao/Index_chr9/chr9 --threads 16 -U ../original_data/SRR1956529_1.fastq.gz --reorder | samtools view -Shb - > SRR1956529_1.bam
 hisat2 -x /dat01/wangjunbao/Index_chr9/chr9 --threads 16 -U ../original_data/SRR1956529_2.fastq.gz --reorder | samtools view -Shb - > SRR1956529_2.bam
 
+conda install Biopython=1.77
 
 #Build Hi-C matrix
 mkdir hicMatrix
-hicBuildMatrix --samFiles SRR1956527_1.bam SRR1956527_2.bam --binSize 10000 --restrictionSequence GATC --danglingSequence GATC --restrictionCutFile cut_sites.bed --outBam SRR1956527_ref.bam --outFileName hicMatrix/SRR1956527_10kb.h5 --QCfolder hicMatrix/SRR1956527_10kb_QC --threads 8 --inputBufferSize 400000
-hicBuildMatrix --samFiles SRR1956528_1.bam SRR1956528_2.bam --binSize 10000 --restrictionSequence GATC --danglingSequence GATC --restrictionCutFile cut_sites.bed --outBam SRR1956528_ref.bam --outFileName hicMatrix/SRR1956528_10kb.h5 --QCfolder hicMatrix/SRR1956528_10kb_QC --threads 8 --inputBufferSize 400000
-hicBuildMatrix --samFiles SRR1956529_1.bam SRR1956529_2.bam --binSize 10000 --restrictionSequence GATC --danglingSequence GATC --restrictionCutFile cut_sites.bed --outBam SRR1956529_ref.bam --outFileName hicMatrix/SRR1956529_10kb.h5 --QCfolder hicMatrix/SRR1956529_10kb_QC --threads 8 --inputBufferSize 400000
+hicBuildMatrix --samFiles SRR1956527_1.bam SRR1956527_2.bam --binSize 10000 --restrictionSequence GATC --danglingSequence GATC --outBam SRR1956527_ref.bam --outFileName hicMatrix/SRR1956527_10kb.h5 --QCfolder hicMatrix/SRR1956527_10kb_QC --threads 8 --inputBufferSize 400000
+hicBuildMatrix --samFiles SRR1956528_1.bam SRR1956528_2.bam --binSize 10000 --restrictionSequence GATC --danglingSequence GATC --outBam SRR1956528_ref.bam --outFileName hicMatrix/SRR1956528_10kb.h5 --QCfolder hicMatrix/SRR1956528_10kb_QC --threads 8 --inputBufferSize 400000
+hicBuildMatrix --samFiles SRR1956529_1.bam SRR1956529_2.bam --binSize 10000 --restrictionSequence GATC --danglingSequence GATC --outBam SRR1956529_ref.bam --outFileName hicMatrix/SRR1956529_10kb.h5 --QCfolder hicMatrix/SRR1956529_10kb_QC --threads 8 --inputBufferSize 400000
+
 
 #Merge (sum) matrices from replicates
 hicSumMatrices --matrices hicMatrix/SRR1956527_10kb.h5 hicMatrix/SRR1956528_10kb.h5 \
