@@ -1,3 +1,6 @@
+#安装软件
+conda install hicexplorer -c bioconda -c conda-forge
+
 #Prepare for analysis
 #Download Raw fastq files
 
