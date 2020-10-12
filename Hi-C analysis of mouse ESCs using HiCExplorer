@@ -20,7 +20,8 @@ cat genome_mm10/*.fa > genome_mm10/mm10.fa
 
 #构建index
 hisat2-build -p 8 genome_mm10/mm10.fa hisat2/mm10_index
-
+###超算中心 构建chr9的index
+hisat2-build chr9.fa -p 16 chr9
 #比对到基因组
 hisat2 -x /home/wangjunbao1/index/hisat2/UCSC_mm10/mm10 --threads 8 -U ../original_data/SRR1956527_1.fastq.gz --reorder | samtools view -Shb - > SRR1956527_1.bam
 hisat2 -x /home/wangjunbao1/index/hisat2/UCSC_mm10/mm10 --threads 8 -U ../original_data/SRR1956527_2.fastq.gz --reorder | samtools view -Shb - > SRR1956527_2.bam
